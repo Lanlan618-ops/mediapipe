@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050506" />
+  <title>Holo / Gesture — Four Forms</title>
+  <meta name="description" content="左手张开托起旋转全息立方体，右手叠加全息骨架并控制3D花与英文艺术字的爆散聚合，握拳切换下一张模型。" />
+  <link rel="preload" href="../assets/fonts/IBMPlexMono-Regular.ttf" as="font" type="font/ttf" crossorigin />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="experience" id="experience">
+    <video class="camera" id="webcam" playsinline muted autoplay aria-hidden="true"></video>
+    <div class="camera-grade" aria-hidden="true"></div>
+    <div class="camera-grain" aria-hidden="true"></div>
+
+    <canvas class="scene" id="scene" aria-hidden="true"></canvas>
+    <canvas class="hand-rig" id="handRig" aria-hidden="true"></canvas>
+    <canvas class="hand-debug" id="handDebug" aria-hidden="true"></canvas>
+
+    <header class="hud" aria-live="polite">
+      <p class="hud__model">
+        <span class="hud__index" id="modelIndex">01</span>
+        <span class="hud__slash">/</span>
+        <span class="hud__total">04</span>
+        <span class="hud__name" id="modelName">红玫瑰</span>
+      </p>
+      <p class="hud__hint" id="hint">左手托举立方体 · 右手张开消散 · 握拳聚合切换</p>
+    </header>
+
+    <div class="debug-readout" id="debugReadout" aria-hidden="true">TRACKER / waiting</div>
+    <div class="notice" id="notice" role="status"></div>
+
+    <section class="gate" id="gate" aria-label="启动摄像头体验">
+      <div class="gate__card">
+        <p class="gate__eyebrow">HOLOGRAM / GESTURE</p>
+        <h1>让影像，<br /><em>落在掌心。</em></h1>
+        <p class="gate__message" id="gateMessage">正在连接摄像头与手势追踪…</p>
+        <button class="gate__button" id="gateButton" type="button" hidden>开启摄像头</button>
+        <p class="gate__note">画面只在本机处理，不会上传。</p>
+      </div>
+    </section>
+
+    <noscript>
+      <div class="gate gate--plain"><p>需要启用 JavaScript 才能运行手势粒子体验。</p></div>
+    </noscript>
+  </main>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./assets/vendor/three.module.js",
+        "three/addons/": "./assets/vendor/addons/"
+      }
+    }
+  </script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

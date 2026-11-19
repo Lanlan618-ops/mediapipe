@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Nine Pink Roses — Soft Hologram</title>
+  <meta name="description" content="九朵粉玫瑰收拢成一束，绿色叶片附着花茎，花茎在底部自然并拢。白色背景，柔和全息发光材质。" />
+  <link rel="preload" href="../assets/fonts/InstrumentSerif-Regular.ttf" as="font" type="font/ttf" crossorigin />
+  <link rel="preload" href="../assets/fonts/InstrumentSerif-Italic.ttf" as="font" type="font/ttf" crossorigin />
+  <link rel="preload" href="../assets/fonts/IBMPlexMono-Regular.ttf" as="font" type="font/ttf" crossorigin />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="stage" id="stageWrap">
+    <canvas id="stage" aria-label="九朵粉玫瑰，花茎自然并拢，绿色叶片附着在花茎上，白色全息背景"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="topbar ui">
+      <div class="brand"><span class="brand__mark"></span><span>ROSE / PASTEL</span></div>
+      <div class="topbar__meta"><span>NINE PINK ROSES</span><span>SOFT HOLOGRAM / 2026</span></div>
+    </header>
+
+    <section class="title ui">
+      <p class="eyebrow">NINE ROSES · GATHERED STEMS</p>
+      <h1>Nine pink<br /><em>roses.</em></h1>
+      <p class="title__zh">九朵粉玫瑰收拢成一束，花茎在底部自然并拢，绿叶长在花茎上。</p>
+    </section>
+
+    <aside class="meta ui">
+      <div><span>ROSES</span><b>9</b></div>
+      <div><span>LEAVES</span><b>12 / ATTACHED</b></div>
+      <div><span>FORMAT</span><b>GLB</b></div>
+    </aside>
+
+    <nav class="controls ui" aria-label="Viewer controls">
+      <button id="spinBtn" type="button" aria-pressed="true"><i></i><span id="spinLabel">PAUSE MOTION</span></button>
+      <button id="cubeBtn" type="button" aria-pressed="false"><i></i>CUBE</button>
+      <a href="./assets/pink_rose_bouquet.glb" download>GLB <span>↗</span></a>
+    </nav>
+
+    <div class="loader" id="loader" role="status">
+      <span></span>
+      <p>ARRANGING NINE ROSES</p>
+    </div>
+
+    <div class="error" id="error" hidden>
+      <h2>WebGL is unavailable.</h2>
+      <p>请使用支持 WebGL 的桌面浏览器打开，或启用硬件加速。</p>
+    </div>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./assets/vendor/three.module.js",
+        "three/addons/": "./assets/vendor/addons/"
+      }
+    }
+  </script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

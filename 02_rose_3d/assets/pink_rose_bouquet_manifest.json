@@ -1,0 +1,15 @@
+{
+  "asset": "Nine pink roses, gathered stems, attached green leaves \u2014 no ribbon",
+  "units": "metres",
+  "up": "Y",
+  "roses": 9,
+  "leaves": 12,
+  "stems": 9,
+  "objects": 30,
+  "triangles": 315036,
+  "structure": "independent rose heads, individual gathered stems, and petiole-attached leaves",
+  "files": {
+    "pink_rose_bouquet.glb": 8927060
+  },
+  "notes": "No paper, wrapping, or ribbon. Every leaf is attached to a stem with a petiole; all stems gather naturally at the waist."
+}

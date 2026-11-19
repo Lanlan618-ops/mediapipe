@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>mediapipe 1.0 — four studies</title>
+<meta name="description" content="四个视觉实验：男人手捧鲜花全息、九朵粉玫瑰 3D、油菜花 3D、男后背抱女生全息。" />
+<style>
+@font-face{font-family:"Instrument Serif";src:url("assets/fonts/InstrumentSerif-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Instrument Serif";src:url("assets/fonts/InstrumentSerif-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"IBM Plex Mono";src:url("assets/fonts/IBMPlexMono-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+:root{
+  --bg:#050504;
+  --panel:#0b0b09;
+  --ink:#f3efe5;
+  --muted:#8d877a;
+  --gold:#d8b46d;
+  --gold-soft:rgba(216,180,109,.34);
+  --line:rgba(243,239,229,.12);
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;color:var(--ink);background:
+    radial-gradient(ellipse 80% 45% at 50% -12%, rgba(216,180,109,.12), transparent 62%),
+    radial-gradient(ellipse 60% 50% at 100% 105%, rgba(120,90,40,.09), transparent 70%),
+    var(--bg);
+  font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:20;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode:screen;
+}
+a{color:inherit;text-decoration:none}
+.page{width:min(1320px,92vw);margin:0 auto;padding:34px 0 48px}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:12px;letter-spacing:.16em;font-size:11px}
+.brand strong{font-weight:400;color:var(--gold)}
+.brand .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 18px 4px rgba(216,180,109,.35);display:inline-block;transform:translateY(-1px)}
+.topmeta{text-align:right;font-size:9px;line-height:1.9;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+.hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(220px,.7fr);gap:44px;align-items:end;padding:64px 0 54px}
+.kicker{font-size:10px;letter-spacing:.24em;color:var(--gold);text-transform:uppercase;margin:0 0 24px}
+h1{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:clamp(58px,8.9vw,126px);line-height:.84;letter-spacing:-.035em;margin:0}
+h1 em{font-style:italic;color:var(--gold)}
+.hero__right{padding-bottom:8px}
+.hero__right p{font-size:11px;line-height:2;color:var(--muted);margin:0 0 22px;max-width:300px}
+.stats{display:flex;gap:22px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px}
+.stats div{font-size:9px;letter-spacing:.14em;color:var(--muted)}
+.stats b{display:block;font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:25px;letter-spacing:0;color:var(--ink);margin-bottom:2px}
+.live-entry{display:grid;grid-template-columns:1fr auto;align-items:center;gap:28px;margin:0 0 26px;padding:24px 26px;border:1px solid var(--gold-soft);background:linear-gradient(100deg,rgba(216,180,109,.09),rgba(255,255,255,.018) 56%,rgba(255,255,255,0));position:relative;overflow:hidden;isolation:isolate;transition:border-color .35s ease,background .35s ease}
+.live-entry::before{content:"";position:absolute;width:360px;height:360px;right:4%;top:-180%;border-radius:50%;background:radial-gradient(circle,rgba(216,180,109,.22),transparent 66%);pointer-events:none;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.live-entry:hover{border-color:rgba(216,180,109,.62);background:linear-gradient(100deg,rgba(216,180,109,.13),rgba(255,255,255,.025) 56%,rgba(255,255,255,0))}
+.live-entry:hover::before{transform:translateY(60%)}
+.live-entry__main{display:flex;align-items:flex-start;gap:19px}
+.live-entry__signal{width:7px;height:7px;margin-top:9px;border-radius:50%;flex:0 0 auto;background:var(--gold);box-shadow:0 0 0 4px rgba(216,180,109,.09),0 0 22px 5px rgba(216,180,109,.36);animation:signal 2.6s ease-in-out infinite}
+@keyframes signal{0%,100%{opacity:.55;transform:scale(.82)}50%{opacity:1;transform:scale(1)}}
+.live-entry__kicker{display:block;font-size:9px;letter-spacing:.18em;color:var(--gold);margin:0 0 7px;text-transform:uppercase}
+.live-entry__title{font-family:"Instrument Serif",Georgia,serif;font-size:clamp(28px,3.2vw,40px);font-weight:400;line-height:1;letter-spacing:-.015em;margin:0 0 8px}
+.live-entry__title em{color:var(--gold);font-style:italic}
+.live-entry__desc{margin:0;color:var(--muted);font-size:10px;line-height:1.8;letter-spacing:.04em}
+.live-entry__cta{font-size:9px;letter-spacing:.18em;color:var(--gold);border-bottom:1px solid var(--gold-soft);padding-bottom:4px;white-space:nowrap;transition:color .3s ease,border-color .3s ease}
+.live-entry:hover .live-entry__cta{color:#fff;border-color:#fff}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 22px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0) 42%);border:1px solid var(--line);position:relative;overflow:hidden}
+.card__media{position:relative;aspect-ratio:4/5;overflow:hidden;background:#070706;display:block}
+.card__media img,.card__media video{width:100%;height:100%;display:block;object-fit:cover;transition:transform .9s cubic-bezier(.2,.7,.2,1),filter .9s ease}
+.card__media--light{background:#f6f3ec}
+.card__media--light img{object-fit:contain}
+.card:hover .card__media img,.card:hover .card__media video{transform:scale(1.018);filter:brightness(1.04)}
+.card__media::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 24%,transparent 72%,rgba(0,0,0,.55))}
+.card__media--light::after{background:linear-gradient(180deg,rgba(0,0,0,.12),transparent 22%,transparent 78%,rgba(0,0,0,.18))}
+.num,.badge{position:absolute;z-index:2;top:16px;font-size:9px;letter-spacing:.16em;color:rgba(255,255,255,.82);text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.num{left:17px;color:var(--gold)}
+.card__media--light .num{color:#8a6b2f;text-shadow:none}
+.card__media--light .badge{color:rgba(24,21,16,.55);text-shadow:none}
+.badge{right:17px;text-transform:uppercase}
+.media-link{position:absolute;z-index:3;inset:0;display:flex;align-items:flex-end;justify-content:space-between;padding:18px;opacity:0;transition:opacity .35s ease;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.45));color:#fff;font-size:10px;letter-spacing:.16em}
+.card:hover .media-link,.media-link:focus-visible{opacity:1}
+.media-link span:last-child{color:var(--gold)}
+.play{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border:1px solid rgba(255,255,255,.5);border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.2);backdrop-filter:blur(5px);font-size:11px;color:#fff;padding-left:2px;opacity:.82;transition:opacity .3s ease,border-color .3s ease,color .3s ease;pointer-events:none}
+.card:hover .play{opacity:1;border-color:var(--gold);color:var(--gold)}
+.card__body{padding:20px 20px 19px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;border-top:1px solid var(--line)}
+.card__title{font-family:"Instrument Serif",Georgia,serif;font-size:clamp(26px,2.8vw,38px);font-weight:400;line-height:.95;letter-spacing:-.02em;margin:0 0 8px}
+.card__title em{color:var(--gold);font-style:italic}
+.card__zh{font-size:10px;line-height:1.8;color:var(--muted);margin:0;letter-spacing:.04em;max-width:290px}
+.card__tags{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:150px}
+.tag{font-size:8px;letter-spacing:.1em;border:1px solid var(--gold-soft);color:var(--gold);padding:4px 6px 3px;white-space:nowrap}
+.open{font-size:9px;letter-spacing:.16em;color:var(--gold);border-bottom:1px solid var(--gold-soft);padding-bottom:3px;white-space:nowrap}
+.open:hover{color:#fff;border-color:#fff}
+.footer{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;margin-top:58px;padding-top:20px;border-top:1px solid var(--line);font-size:9px;line-height:1.9;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.footer b{color:var(--ink);font-weight:400}
+.hint{max-width:580px;text-transform:none;letter-spacing:.03em;font-size:10px;line-height:1.9}
+@media (max-width:900px){
+  .page{width:90vw;padding-top:24px}
+  .hero{grid-template-columns:1fr;gap:30px;padding:44px 0 36px}
+  h1{font-size:clamp(52px,15vw,92px)}
+  .grid{grid-template-columns:1fr}
+  .topmeta{display:none}
+  .footer{display:block}
+  .hint{margin-top:14px}
+  .live-entry{grid-template-columns:1fr;gap:18px;padding:21px 20px}
+  .live-entry__cta{justify-self:start}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="topbar">
+    <div class="brand"><span class="dot"></span><strong>MEDIAPIPE</strong><span>1.0</span></div>
+    <div class="topmeta">FOUR VISUAL STUDIES<br />HOLOGRAM / 3D / GESTURE / 2026</div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <p class="kicker">A small archive of light and form</p>
+      <h1>Light,<br />held <em>in place.</em></h1>
+    </div>
+    <div class="hero__right">
+      <p>四组关于人物、花与空间的视觉实验。两个全息影像，两个可旋转的 3D 花束，以及一个由真实手势重新组织它们的实时体验。</p>
+      <div class="stats">
+        <div><b>04</b>STUDIES</div>
+        <div><b>02</b>FILMS</div>
+        <div><b>02</b>REALTIME</div>
+        <div><b>01</b>GESTURE</div>
+      </div>
+    </div>
+  </section>
+
+  <a class="live-entry" href="05_gesture_particles/" aria-label="打开全屏双手手势粒子体验：左手托住旋转全息立方体，3D花随立方体旋转，右手张开消散、握拳切换四个形态">
+    <div class="live-entry__main">
+      <span class="live-entry__signal" aria-hidden="true"></span>
+      <div>
+        <span class="live-entry__kicker">NEW · LIVE GESTURE / 05</span>
+        <h2 class="live-entry__title">让影像，<em>落在掌心。</em></h2>
+        <p class="live-entry__desc">左手张开托起旋转全息立方体：3D 花与英文艺术字，右手带全息骨架与粒子控制。</p>
+      </div>
+    </div>
+    <span class="live-entry__cta">OPEN EXPERIENCE ↗</span>
+  </a>
+
+  <main class="grid">
+
+    <article class="card">
+      <a class="card__media" href="01_man_flower_hologram/man_flower_hologram.mp4" target="_blank" rel="noopener" aria-label="打开男人手捧鲜花的全息 3D 影像">
+        <span class="num">01</span><span class="badge">FILM · 00:12</span>
+        <img src="thumbs/01_man.jpg" alt="男人手捧鲜花的全息 3D 影像" />
+        <span class="play" aria-hidden="true">▶</span>
+        <span class="media-link"><span>HOLOGRAM · 1080 × 1350</span><span>OPEN FILM ↗</span></span>
+      </a>
+      <div class="card__body">
+        <div>
+          <h2 class="card__title">Man with <em>flowers.</em></h2>
+          <p class="card__zh">男人手捧鲜花全息 3D。人物与花束被收进透明线框立方体，缓慢旋转。</p>
+        </div>
+        <div class="card__tags"><span class="tag">HOLOGRAM</span><a class="open" href="01_man_flower_hologram/man_flower_hologram.mp4" target="_blank" rel="noopener">OPEN FILM ↗</a></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <a class="card__media card__media--light" href="02_rose_3d/index.html" target="_blank" rel="noopener" aria-label="打开九朵粉玫瑰 3D 场景">
+        <span class="num">02</span><span class="badge">REALTIME 3D</span>
+        <img src="thumbs/02_rose.jpg" alt="九朵粉玫瑰与绿色花茎的 3D 渲染" />
+        <span class="media-link"><span>NINE ROSES · GLB</span><span>OPEN 3D ↗</span></span>
+      </a>
+      <div class="card__body">
+        <div>
+          <h2 class="card__title">Nine <em>roses.</em></h2>
+          <p class="card__zh">3d 建模玫瑰花。九朵粉玫瑰收拢成束，绿色叶片附着花茎，可自由旋转并下载 GLB。</p>
+        </div>
+        <div class="card__tags"><span class="tag">PBR / GLB</span><a class="open" href="02_rose_3d/index.html" target="_blank" rel="noopener">OPEN 3D ↗</a></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <a class="card__media card__media--light" href="03_rapeseed_3d/index.html" target="_blank" rel="noopener" aria-label="打开油菜花 3D 场景">
+        <span class="num">03</span><span class="badge">REALTIME 3D</span>
+        <img src="thumbs/03_rapeseed.jpg" alt="透明玻璃花瓶中的油菜花 3D 渲染" />
+        <span class="media-link"><span>RAPESEED · OBJ / GLB</span><span>OPEN 3D ↗</span></span>
+      </a>
+      <div class="card__body">
+        <div>
+          <h2 class="card__title">Rape<em>seed.</em></h2>
+          <p class="card__zh">3d 建模油菜花。透明直筒玻璃花瓶与清水，细茎、花瓣独立建模，提供 OBJ 与 GLB。</p>
+        </div>
+        <div class="card__tags"><span class="tag">GLASS / PBR</span><a class="open" href="03_rapeseed_3d/index.html" target="_blank" rel="noopener">OPEN 3D ↗</a></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <a class="card__media" href="04_couple_hologram/couple_hologram_gold.mp4" target="_blank" rel="noopener" aria-label="打开男后背抱女生的金色全息 3D 影像">
+        <span class="num">04</span><span class="badge">FILM · 00:08</span>
+        <img src="thumbs/04_couple.jpg" alt="男后背抱女生的金色全息 3D 影像" />
+        <span class="play" aria-hidden="true">▶</span>
+        <span class="media-link"><span>GOLD · 1440 × 1080</span><span>OPEN FILM ↗</span></span>
+      </a>
+      <div class="card__body">
+        <div>
+          <h2 class="card__title">Close <em>orbit.</em></h2>
+          <p class="card__zh">男后背抱女生 3D 全息。原始肤色与衣服颜色保留，暖金线框、底部环形扫描与星尘。</p>
+        </div>
+        <div class="card__tags"><span class="tag">GOLD / LOOP</span><a class="open" href="04_couple_hologram/couple_hologram_gold.mp4" target="_blank" rel="noopener">OPEN FILM ↗</a></div>
+      </div>
+    </article>
+
+  </main>
+
+  <footer class="footer">
+    <div><b>MEDIAPIPE 1.0</b> / FOUR STUDIES + LIVE GESTURE / 2026</div>
+    <div class="hint">3D 与手势体验需要本地服务器、WebGL 与摄像头权限。双击 <b>start.command</b>，或在本文件夹运行 <b>python3 -m http.server 4180</b>。</div>
+  </footer>
+</div>
+</body>
+</html>
